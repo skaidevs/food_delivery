@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:food_delivery/bloc/cartListBloc.dart';
 import 'package:food_delivery/model/foodItem.dart';
+import 'package:food_delivery/cart.dart';
 
 void main() => runApp(MyApp());
 
@@ -315,6 +316,8 @@ class FirstHalf extends StatelessWidget {
 }
 
 class CustomAppBar extends StatelessWidget {
+  final CartListBloc bloc = BlocProvider.getBloc<CartListBloc>();
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -323,19 +326,40 @@ class CustomAppBar extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           Icon(Icons.menu),
-          GestureDetector(
-            onDoubleTap: () {},
-            child: Container(
-              margin: EdgeInsets.only(right: 30),
-              child: Text('0'),
-              padding: EdgeInsets.all(15),
-              decoration: BoxDecoration(
-                color: Colors.yellow[800],
-                borderRadius: BorderRadius.circular(50),
-              ),
-            ),
-          )
+          StreamBuilder(
+            stream: bloc.listStream,
+            builder: (context, snapShort) {
+              List<FoodItem> foodItems = snapShort.data;
+
+              int length = foodItems != null ? foodItems.length : 0;
+
+              return buildGestureDetector(length, context, foodItems);
+            },
+          ),
         ],
+      ),
+    );
+  }
+
+  GestureDetector buildGestureDetector(
+      int length, BuildContext context, List<FoodItem> foodItems) {
+    return GestureDetector(
+      onDoubleTap: () {
+        if (length > 0) {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => Cart()));
+        } else {
+          return;
+        }
+      },
+      child: Container(
+        margin: EdgeInsets.only(right: 30),
+        child: Text(length.toString()),
+        padding: EdgeInsets.all(15),
+        decoration: BoxDecoration(
+          color: Color(0xffFF5722),
+          borderRadius: BorderRadius.circular(50),
+        ),
       ),
     );
   }
@@ -360,7 +384,7 @@ class CategoryListItem extends StatelessWidget {
       padding: EdgeInsets.fromLTRB(10, 10, 10, 20),
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(50),
-          color: selected ? Color(0xfffeb324) : Colors.white,
+          color: selected ? Color(0xffFF5722) : Colors.white,
           border: Border.all(
             color: selected ? Colors.transparent : Colors.grey[200],
             width: 1.5,
