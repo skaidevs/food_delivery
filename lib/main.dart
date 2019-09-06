@@ -344,7 +344,7 @@ class CustomAppBar extends StatelessWidget {
   GestureDetector buildGestureDetector(
       int length, BuildContext context, List<FoodItem> foodItems) {
     return GestureDetector(
-      onDoubleTap: () {
+      onTap: () {
         if (length > 0) {
           Navigator.push(
               context, MaterialPageRoute(builder: (context) => Cart()));

@@ -56,7 +56,22 @@ class BottomBar extends StatelessWidget {
     );
   }
 
-  Container persons() {}
+  Container persons() {
+    return Container(
+      margin: EdgeInsets.only(right: 10),
+      padding: EdgeInsets.symmetric(vertical: 30),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Text(
+            'Persons',
+            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
+          ),
+          CustomPersonWidget()
+        ],
+      ),
+    );
+  }
 
   Container totalAmount(List<FoodItem> foodItem) {
     return Container(
@@ -85,6 +100,24 @@ class BottomBar extends StatelessWidget {
     }
 
     return totalAmount.toStringAsFixed(2);
+  }
+}
+
+class CustomPersonWidget extends StatefulWidget {
+  @override
+  _CustomPersonWidgetState createState() => _CustomPersonWidgetState();
+}
+
+class _CustomPersonWidgetState extends State<CustomPersonWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.only(right: 25),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Colors.grey[300], width: 2),
+      ),
+    );
   }
 }
 
@@ -222,7 +255,7 @@ class CustomAppbar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
         Padding(
           padding: EdgeInsets.all(5),
