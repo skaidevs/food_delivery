@@ -51,6 +51,31 @@ class BottomBar extends StatelessWidget {
             color: Colors.grey[700],
           ),
           persons(),
+          nextButton(),
+        ],
+      ),
+    );
+  }
+
+  Container nextButton() {
+    return Container(
+      margin: EdgeInsets.only(right: 25),
+      padding: EdgeInsets.all(25),
+      decoration: BoxDecoration(
+        color: Color(0xffFF5722),
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Text(
+            '12-25 min',
+            style: TextStyle(fontWeight: FontWeight.w800, fontSize: 14),
+          ),
+          Text(
+            'Next',
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.w900),
+          )
         ],
       ),
     );
@@ -109,6 +134,9 @@ class CustomPersonWidget extends StatefulWidget {
 }
 
 class _CustomPersonWidgetState extends State<CustomPersonWidget> {
+  int noOfPersons = 1;
+  double _buttonWidth = 30;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -116,6 +144,51 @@ class _CustomPersonWidgetState extends State<CustomPersonWidget> {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
         border: Border.all(color: Colors.grey[300], width: 2),
+      ),
+      padding: EdgeInsets.symmetric(vertical: 5),
+      width: 120,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: <Widget>[
+          SizedBox(
+            width: _buttonWidth,
+            height: _buttonWidth,
+            child: FlatButton(
+              onPressed: () {
+                setState(() {
+                  if (noOfPersons > 1) {
+                    noOfPersons--;
+                  }
+                });
+              },
+              child: Text(
+                '-',
+                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
+              ),
+            ),
+          ),
+          Text(
+            noOfPersons.toString(),
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+          ),
+          SizedBox(
+            width: _buttonWidth,
+            height: _buttonWidth,
+            child: FlatButton(
+              onPressed: () {
+                setState(() {
+                  if (noOfPersons > 1) {
+                    noOfPersons++;
+                  }
+                });
+              },
+              child: Text(
+                '+',
+                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
