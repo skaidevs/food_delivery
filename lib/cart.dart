@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:food_delivery/bloc/cartListBloc.dart';
 
 import 'package:bloc_pattern/bloc_pattern.dart';
+import 'package:food_delivery/bloc/listStyleColorBloc.dart';
 
 import 'package:food_delivery/model/foodItem.dart';
 
@@ -270,9 +271,90 @@ class CartListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return Draggable(
+        data: foodItem,
+        maxSimultaneousDrags: 1,
+        child: DraggableChild(foodItem: foodItem),
+        feedback: DraggableChildFeedback(foodItem: foodItem),
+        childWhenDragging: foodItem.quantity > 1
+            ? DraggableChild(
+                foodItem: foodItem,
+              )
+            : Container());
+  }
+}
+
+class DraggableChild extends StatelessWidget {
+  const DraggableChild({
+    Key key,
+    @required this.foodItem,
+  }) : super(key: key);
+
+  final FoodItem foodItem;
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(bottom: 25),
-      child: ItemContainer(foodItem: foodItem),
+      child: Row(
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              children: <Widget>[
+                Container(
+                  margin: EdgeInsets.only(bottom: 25),
+                  child: ItemContainer(foodItem: foodItem),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class DraggableChildFeedback extends StatelessWidget {
+  const DraggableChildFeedback({
+    Key key,
+    @required this.foodItem,
+  }) : super(key: key);
+
+  final FoodItem foodItem;
+
+  @override
+  Widget build(BuildContext context) {
+    final ColorBloc colorBloc = BlocProvider.getBloc<ColorBloc>();
+
+    return Opacity(
+      opacity: 0.7,
+      child: Material(
+        child: StreamBuilder<Object>(
+            stream: colorBloc.colorStream,
+            builder: (context, snapshot) {
+              return Container(
+                child: Row(
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        children: <Widget>[
+                          Container(
+                            margin: EdgeInsets.only(bottom: 25),
+                            child: ItemContainer(foodItem: foodItem),
+                            decoration: BoxDecoration(
+                                color: snapshot.data != null
+                                    ? snapshot.data
+                                    : Colors.white),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }),
+      ),
     );
   }
 }
@@ -342,14 +424,41 @@ class CustomAppbar extends StatelessWidget {
             },
           ),
         ),
-        GestureDetector(
-          child: Padding(
-            padding: EdgeInsets.all(5.0),
-            child: Icon(CupertinoIcons.delete),
-          ),
-          onTap: () {},
-        )
+        DragTargetWidget(),
       ],
+    );
+  }
+}
+
+class DragTargetWidget extends StatefulWidget {
+  @override
+  _DragTargetWidgetState createState() => _DragTargetWidgetState();
+}
+
+class _DragTargetWidgetState extends State<DragTargetWidget> {
+  final CartListBloc blocList = BlocProvider.getBloc<CartListBloc>();
+  final ColorBloc colorBloc = BlocProvider.getBloc<ColorBloc>();
+
+  @override
+  Widget build(BuildContext context) {
+    return DragTarget<FoodItem>(
+      onWillAccept: (FoodItem foodItem) {
+        colorBloc.setColor(Colors.red);
+        return true;
+      },
+      onAccept: (FoodItem foodItem) {
+        blocList.removeFromList(foodItem);
+        colorBloc.setColor(Colors.white);
+      },
+      onLeave: (FoodItem foodItem) {
+        colorBloc.setColor(Colors.white);
+      },
+      builder: (context, incoming, rejected) {
+        return Padding(
+          padding: EdgeInsets.all(5.0),
+          child: Icon(CupertinoIcons.delete),
+        );
+      },
     );
   }
 }

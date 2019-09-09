@@ -30,7 +30,13 @@ class CartProvider {
   void decrementItemQuantity(FoodItem foodItem) => foodItem.decrementQuantity();
 
   List<FoodItem> removeFromList(FoodItem foodItem) {
-    foodItems.remove(foodItem);
+    if (foodItem.quantity > 1) {
+      //only decrease the quantity
+      decrementItemQuantity(foodItem);
+    } else {
+      //remove it from the list
+      foodItems.remove(foodItem);
+    }
     return foodItems;
   }
 }
